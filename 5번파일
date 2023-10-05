@@ -1,0 +1,92 @@
+7번핀led켜고끄는 코드
+아두이노
+int ledPin = 7;
+bool isLedOn = false;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+    if (command == '1') {
+      digitalWrite(ledPin, HIGH);
+      isLedOn = true;
+    } else if (command == '0') {
+      digitalWrite(ledPin, LOW);
+      isLedOn = false;
+    }
+  }
+}
+
+프로세싱
+import processing.serial.*;
+
+Serial arduino;
+
+void setup() {
+  size(200, 100);
+  arduino = new Serial(this, "COM3", 9600); // 아두이노 연결 포트(COM 포트)를 변경하세요.
+}
+
+void draw() {
+  background(220);
+}
+
+void keyPressed() {
+  if (key == '1' || key == '0') {
+    arduino.write(key); // '1'을 누르면 아두이노로 '1'을 보내 LED를 켜고, '0'을 누르면 아두이노로 '0'을 보내 LED를 끕니다.
+  }
+}
+
+앱 인벤터는 버튼이랑 누르면 값이 보내지는것만 만들었습니다
+#####################################################################################################################################
+특정 값 넣으면 도레미~라시도 소리나오는 코드
+아두이노
+#include "pitches.h"
+
+int speakerPin = 4;
+int melody[] = {262, 294, 330, 349, 392, 440, 494, 523}; // 도, 레, 미, 파, 솔, 라, 시, 도
+
+void setup() {
+  pinMode(speakerPin, OUTPUT);
+}
+
+void loop() {
+  // 아두이노는 시리얼 통신을 통해 스마트폰으로부터 숫자를 받습니다.
+  if (Serial.available() > 0) {
+    char note = Serial.read() - '0'; // 스마트폰으로부터 받은 숫자를 정수로 변환합니다.
+    
+    // 입력된 숫자에 해당하는 음계를 연주합니다.
+    if (note >= 1 && note <= 8) {
+      int duration = 500; // 재생 시간 (밀리초)
+      tone(speakerPin, melody[note - 1], duration);
+      delay(duration + 50); // 소리가 끝날 때까지 대기
+      noTone(speakerPin); // 소리 정지
+    }
+  }
+}
+
+프로세싱
+import processing.serial.*;
+
+Serial bluetooth;
+
+void setup() {
+  size(200, 100);
+  bluetooth = new Serial(this, "COM3", 9600); // 아두이노와 연결된 COM 포트를 지정하세요.
+}
+
+void draw() {
+  background(220);
+}
+
+void keyPressed() {
+  if (key >= '1' && key <= '8') {
+    bluetooth.write(key); // 입력한 숫자를 아두이노로 보냅니다.
+  }
+}
+
+앱인벤터에서 텍스트박스와 센드버튼 블루투스클라이언트를 포함하고 앱 인벤터에 블루투스클라이언트 컴포넌트의 주소를 아두이노 블루투스 모듈의 주소로 설정하였습니다
